@@ -112,10 +112,12 @@ class Pack():
             return frame
 
     def getImageByIdx(self, i):
+        if i >= len(self.imgOffsets):
+            return
         self.fd.seek(self.imgOffsets[i])
         buf = self.fd.read(self.imgLens[i])
         abuf = np.asarray(bytearray(buf), dtype='uint8')
-        if len(buf) == self.imgLens[i]:
+        if len(buf) == self.imgLens[i] and len(buf) > 0:
             pic = cv2.imdecode(abuf, cv2.IMREAD_COLOR)
             return pic
 

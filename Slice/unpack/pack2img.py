@@ -12,7 +12,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def pack2img(args):
+def pack2img():
     pack_path = args.pack_path
     pack_split = pack_path.split('/')
     pack_name = pack_split[len(pack_split)-1]
