@@ -14,9 +14,10 @@ open crop.sh file and there are 5 parameters users need to specify.
                      if 50% of ground truth box is in this cropped image, this box will be kept and all ignore attribute will be copied from original annotations file.   
                      if contain overlap is between 0 and 0.5, this box will be labeled as ignore.  
                      if less than 0.0, this box will be threw away.  
-  
-- min_width: minimum width of cropped image. all cropped images will be resized to original size.    
-- max_width: maximum width of crooped image. all cropped images will be resized to original size.   
+min_width: minimum width ratio  
+max_width: maximum width ratio  
+min_height: minimum height ratio  
+max_height: maximum height ratio   
   
 after filled all parameters, just type `bash crop.sh` and it will generate results in save_path which users specified.   
 
