@@ -1,27 +1,15 @@
 # -*- coding: utf-8 -*-
-
+import time
 import  cv2
 import copy as cp
 import numpy as np
 #from skimage  import exposure
 
 def Contrast(img,k=0.7):
-    #k is the contrast factor
-    img_w,img_h,img_c = img.shape
     dst = cp.deepcopy(img)
-    #dst.resize(img.shape)
     Avg = dst.mean()
-    print Avg
-    for w in range(img_w):
-        for h in range(img_h):
-            for c in range(img_c):
-                value = (img[w][h][c] - Avg)*k + img[w,h][c]
-                # print value
-                if value > 255:
-                    value = 255
-                if value < 0:
-                    value = 0
-                dst[w][h][c]= int(value)
+    dst = (img-Avg)*k + img
+    print 'finish constrat'
     return dst
 
 def EquHist(img):
@@ -195,14 +183,31 @@ if __name__ == '__main__':
     src = cv2.imread(img_url)
     dst = cp.deepcopy(src)
 
-
+    a_time = time.clock()
     rote_img = rotate(dst,'normal',20,0.8)
-    noise_img  = noise(dst,'all')
+    b_time = time.clock()
+    print 'Rotate_cost: ',b_time - a_time
 
+    a_time = time.clock()
+    noise_img  = noise(dst,'all')
+    b_time = time.clock()
+    print 'Noise_cost: ',b_time - a_time
+
+    a_time = time.clock()
     const = Contrast(dst,0.7)
+    b_time = time.clock()
+    print 'Contrast_cost: ',b_time - a_time
+
+    a_time = time.clock()
     equ = EquHist(dst)
+    b_time = time.clock()
+    print 'EquHist_cost: ',b_time - a_time
    #illu_img = Illuminate(src)
+    a_time = time.clock()
     local_h  = local_high(src,1.2)
+    b_time = time.clock()
+    print 'Local_h: ',b_time - a_time
+
     cv2.imshow('src',src)
     cv2.imshow('rotated',rote_img)
     cv2.imshow('noise',noise_img)
