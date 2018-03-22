@@ -3,14 +3,27 @@ import time
 import  cv2
 import copy as cp
 import numpy as np
+#from  PIL  import ImageEnhance  as IE
+#from  PIL  import  Image
+#from  PIL  import ImageShow
 #from skimage  import exposure
 
-def Contrast(img,k=0.7):
+def Contrast(img_url,k=0.7):
+    img = Image.open(img_url)
+    en_con = IE.Contrast(img)
+    dst = en_con.enhance(k)
+    np_const = dst.getdata()
+    np_const = np.matrix(np_const)
+    np_const = np_const.reshape(w,h,1).astype('uint8')
+    print 'finish constrat'
+    return  np_const
+
+def Contrast_cv(img,k=0.2):
     dst = cp.deepcopy(img)
     Avg = dst.mean()
-    dst = (img-Avg)*k + img
-    print 'finish constrat'
+    dst = ((img-Avg)*k + img).astype('uint8')
     return dst
+
 
 def EquHist(img):
     w,h,c = img.shape
@@ -181,6 +194,7 @@ if __name__ == '__main__':
     img_url = './test.png'
 
     src = cv2.imread(img_url)
+    w,h,c = src.shape
     dst = cp.deepcopy(src)
 
     a_time = time.clock()
@@ -194,9 +208,14 @@ if __name__ == '__main__':
     print 'Noise_cost: ',b_time - a_time
 
     a_time = time.clock()
-    const = Contrast(dst,0.7)
+    const = Contrast(img_url)
     b_time = time.clock()
     print 'Contrast_cost: ',b_time - a_time
+
+    a_time = time.clock()
+    const_cv = Contrast_cv(dst)
+    b_time = time.clock()
+    print 'Contrast_cost_cv: ',b_time - a_time
 
     a_time = time.clock()
     equ = EquHist(dst)
@@ -204,16 +223,25 @@ if __name__ == '__main__':
     print 'EquHist_cost: ',b_time - a_time
    #illu_img = Illuminate(src)
     a_time = time.clock()
-    local_h  = local_high(src,1.2)
+    local_h  = local_high(src,0.8)
     b_time = time.clock()
     print 'Local_h: ',b_time - a_time
 
+
     cv2.imshow('src',src)
+    cv2.imshow('const_cv',const_cv)
+#    cv2.imshow('const_Img',const)
+    #print const.shape
+
     cv2.imshow('rotated',rote_img)
     cv2.imshow('noise',noise_img)
     #cv2.imshow('illuminate',illu_img)
     cv2.imshow('lcl_h',local_h)
-    cv2.imshow('contrast',const)
+    #ImageShow.show(const, 'contrast')
+    np_const = const.getdata()
+    np_const = np.matrix(np_const)
+    cv2.imshow('contrast',np_const)
+    #const.show(title='contrast')
     cv2.imshow('equ',equ)
     c = chr(255&cv2.waitKey(0))
 
